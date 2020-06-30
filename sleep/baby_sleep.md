@@ -38,7 +38,7 @@ The app also has a feature that lets you download the data as several
 str(feedbaby_raw)
 ```
 
-    ## 'data.frame':    580 obs. of  5 variables:
+    ## 'data.frame':    1012 obs. of  5 variables:
     ##  $ id                            : int  2 1 3 4 5 6 7 8 9 10 ...
     ##  $ Start.Time                    : chr  "11:20PM 01-24-2020" "1:40AM 01-25-2020" "8:30AM 01-25-2020" "3:25PM 01-25-2020" ...
     ##  $ End.Time                      : chr  "12:08AM 01-25-2020" "7:20AM 01-25-2020" "12:00PM 01-25-2020" "6:42PM 01-25-2020" ...
@@ -85,7 +85,7 @@ date_shift_and_split <- function(df,
 }
 
 session_type <- function(df, 
-                         night_start = 19, 
+                         night_start = 18.75, 
                          night_end = 7, 
                          start_time = 'start_time_shift',
                          end_time = 'end_time_shift'){
@@ -134,7 +134,7 @@ feedbaby_sleep_processed <- preprocess_sleep(feedbaby_sleep)
 str(feedbaby_sleep_processed)
 ```
 
-    ## 'data.frame':    616 obs. of  15 variables:
+    ## 'data.frame':    1057 obs. of  15 variables:
     ##  $ start_datetime    : POSIXct, format: "2020-01-24 23:20:00" "2020-01-25 01:40:00" ...
     ##  $ end_datetime      : POSIXct, format: "2020-01-25 00:08:00" "2020-01-25 07:20:00" ...
     ##  $ start_date        : Date, format: "2020-01-24" "2020-01-25" ...
@@ -155,7 +155,7 @@ str(feedbaby_sleep_processed)
 
 Some important details:
 
-  - I am very lucky to be home with my daughter full time for 18 weeks.
+  - I am very lucky to be home with my daughter full time for 19 weeks.
     Because of COVID-19, we started limiting social visits, errands, and
     basically most leaving the house except for doctor appointments when
     she was 8 weeks old. When she was 10 weeks old, a stay-at-home order
@@ -183,7 +183,7 @@ feedbaby_sleep_processed %>%
   geom_rect(aes(xmin = 7, xmax = 31, ymin = 0, ymax = 3/7), fill = 'grey60') +
   scale_x_continuous(breaks = c(7,13,19,25,31), 
                      labels = c('7AM', '1PM', '7PM', '1AM', '7AM')) +
-  scale_y_continuous(breaks = c(2,4,6,8,10,12)) +
+  scale_y_continuous(breaks = c(2,4,6,8,10,12,14,16,18,20,22,24)) +
   labs(title = 'Newborn sleep', 
        subtitle = 'Tracked using the Feed Baby app',
        x = 'Time', 
@@ -199,13 +199,15 @@ You can see how disordered the first few weeks were, with just about as
 much day sleep as night sleep. Luckily, her night sleep showed steady
 improvements over time. While she wasn’t keen on daytime sleep, she
 didn’t have her days and nights mixed up for very long. We got our
-first glorious 5 hour stretch at the end of week 3, and the first signs
-of being able to sleep through the night between 6-8 weeks.
+first glorious 5 hour stretch around week 4, and the first signs of
+being able to sleep through the night between 6-8 weeks.
 
 From weeks 3 to 10, she averaged only two naps a day that were on the
 longer side (1-2.5 hours), and could happen at any time. No clear
 pattern emerged until about week 11, when she started taking short 30-60
-minute naps 4-5 times a day.
+minute naps 4-5 times a day. She transitioned to 4 naps a day around 18
+weeks, and then started to show signs of dropping to 3 naps a day around
+21 weeks.
 
 How many hours does that add up to each day?
 
@@ -217,7 +219,7 @@ feedbaby_sleep_processed %>%
   ungroup() %>%
   ggplot(aes(x = weeks_old, y = total_hours)) + 
   geom_col(aes(fill = type)) +
-  scale_x_continuous(breaks = c(2,4,6,8,10,12)) +
+  scale_x_continuous(breaks = c(2,4,6,8,10,12,14,16,18,20,22,24)) +
   scale_y_continuous(breaks = c(2,4,6,8,10,12,14,16)) +
   labs(title = 'Total hours of sleep',
        x = 'Weeks old',
@@ -233,9 +235,8 @@ day](https://www.sleephealthjournal.org/article/S2352-7218\(15\)00015-7/fulltext
 found to be typical for newborns. We expected to need to wake her up to
 eat and have her snooze anywhere, but she turned out to be a very alert
 baby\! Over time, it’s slowly shifted to be more hours at night and less
-during the day.
-
-How long could she sleep at a time?
+during the day.  
+How long can she sleep at a time?
 
 ``` r
 feedbaby_sleep_processed %>%
@@ -245,7 +246,7 @@ feedbaby_sleep_processed %>%
   ggplot(aes(x = weeks_old, y = longest_stretch)) + 
   geom_line(aes(color = type)) +
   geom_point(aes(color = type)) +
-  scale_x_continuous(breaks = c(2,4,6,8,10,12)) +
+  scale_x_continuous(breaks = c(2,4,6,8,10,12,14,16,18,20,22,24)) +
   labs(title = 'Longest stretch of sleep',
        subtitle = 'Feed Baby',
        x = 'Weeks old',
@@ -257,10 +258,17 @@ feedbaby_sleep_processed %>%
 
 There’s a pretty clear trend of increasing sleep duration at night and
 decreasing duration during the day. She gradually expanded her longest
-stretch from ~2.5 hours in the beginning to 8 by week 8 or so, and then
-had a bit of a regression, likely corresponding to a growth spurt or
-Wonder Week. At the same time, her naps got shorter and shorter until
-they lasted just a single sleep cycle.
+stretch, typically the first sleep of the night, from ~2.5 hours in the
+beginning to 8 by week 8 or so, and then had a bit of a regression,
+likely corresponding to a growth spurt or [Wonder
+Week](https://www.thewonderweeks.com/mental-leap-2/). At the same time,
+her naps got shorter and shorter until they lasted just a single sleep
+cycle. The [fourth month sleep
+regression](https://takingcarababies.com/understanding-the-dreaded-four-month-sleep-regression/)
+hit around week 18 and lasted until week 22, with sleep reverting to 2-3
+hour stretches at best. At the same time, some naps started to lengthen
+to 1 or 1.5 hours, showing that she now had the ability to link sleep
+cycles on her own.
 
 #### Snoo
 
@@ -283,7 +291,7 @@ I was excited to see that you can access your Snoo data using the
 str(snoo_raw)
 ```
 
-    ## 'data.frame':    278 obs. of  5 variables:
+    ## 'data.frame':    680 obs. of  5 variables:
     ##  $ start_time: chr  "2020-02-23T21:20:30" "2020-02-24T01:12:02" "2020-02-24T05:37:11" "2020-02-24T13:33:34" ...
     ##  $ end_time  : chr  "2020-02-24T00:24:23" "2020-02-24T04:11:42" "2020-02-24T05:43:02" "2020-02-24T16:24:33" ...
     ##  $ duration  : int  11033 10780 351 10259 18219 2892 12759 13210 7563 10653 ...
@@ -320,7 +328,7 @@ snoo_sleep_processed <- preprocess_sleep(snoo_sleep)
 str(snoo_sleep_processed)
 ```
 
-    ## 'data.frame':    296 obs. of  15 variables:
+    ## 'data.frame':    706 obs. of  15 variables:
     ##  $ start_datetime    : POSIXct, format: "2020-02-23 21:20:30" "2020-02-24 01:12:02" ...
     ##  $ end_datetime      : POSIXct, format: "2020-02-24 00:24:23" "2020-02-24 04:11:42" ...
     ##  $ start_date        : Date, format: "2020-02-23" "2020-02-24" ...
@@ -350,7 +358,7 @@ feedbaby_sleep_processed %>%
   geom_rect(aes(xmin = 7, xmax = 31, ymin = 0, ymax = 3/7), fill = 'grey60') +
   scale_x_continuous(breaks = c(7,13,19,25,31), 
                      labels = c('7AM', '1PM', '7PM', '1AM', '7AM')) +
-  scale_y_continuous(breaks = c(2,4,6,8,10,12)) +
+  scale_y_continuous(breaks = c(2,4,6,8,10,12,14,16,18,20,22,24)) +
   labs(title = 'Newborn sleep', 
        subtitle = 'Began using the Snoo for night sleep ~5 weeks; naps varied',
        x = 'Time', 
@@ -371,6 +379,12 @@ Snoo, but we could extend her naps longer if we held her. Around 10
 weeks, her naps got short no matter if we held her or not, so we tried
 moving them into the Snoo, but didn’t get successful until week 12 or
 so.
+
+She started daycare at week 19, so midday naps happened there and not in
+the Snoo. We often had her take her first nap at home (my husband
+typically works second shift and can do daycare drop-off around 9) and
+nearly always put her down for a short catnap after I picked her up
+around 4:30.
 
 There is some variance between the Feed Baby and Snoo sleep sessions
 because Feed Baby is tracked manually, while the Snoo automatically
