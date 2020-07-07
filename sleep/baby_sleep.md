@@ -22,7 +22,12 @@ to track diaper changes, feeds, sleep, weight, and so on, and we
 immediately traded in the pen + paper tracker provided by the hospital
 for a digital tracker. As a data nerd, I also assumed I’d be able to use
 the meticulously tracked data to better understand my baby and maybe
-even figure out how to make her sleep longer (LOL).
+even figure out how to make her sleep longer (LOL). *Narrator: she did
+not.*
+
+TL;DR: Time is the biggest predictor for improved baby sleep, though
+development isn’t linear. Type A parents: you just have to ride this one
+out (or get lucky with a naturally great sleeper).
 
 ``` r
 knitr::include_graphics("images/feedbaby_screenshot.png")
@@ -38,7 +43,7 @@ The app also has a feature that lets you download the data as several
 str(feedbaby_raw)
 ```
 
-    ## 'data.frame':    1012 obs. of  5 variables:
+    ## 'data.frame':    1046 obs. of  5 variables:
     ##  $ id                            : int  2 1 3 4 5 6 7 8 9 10 ...
     ##  $ Start.Time                    : chr  "11:20PM 01-24-2020" "1:40AM 01-25-2020" "8:30AM 01-25-2020" "3:25PM 01-25-2020" ...
     ##  $ End.Time                      : chr  "12:08AM 01-25-2020" "7:20AM 01-25-2020" "12:00PM 01-25-2020" "6:42PM 01-25-2020" ...
@@ -49,7 +54,7 @@ str(feedbaby_raw)
 
 First, I split sessions into individual days (e.g. sessions crossing
 over midnight would become one ending at 11:59 PM and a second one
-starting at 12:00 AM). For cleaner visualiztion, I then shifted the
+starting at 12:00 AM). For cleaner visualization, I then shifted the
 times to allow for a plot with the x axis beginning at 7 AM rather than
 12 AM to more clearly delineate day and night sleeps.
 
@@ -134,7 +139,7 @@ feedbaby_sleep_processed <- preprocess_sleep(feedbaby_sleep)
 str(feedbaby_sleep_processed)
 ```
 
-    ## 'data.frame':    1057 obs. of  15 variables:
+    ## 'data.frame':    1091 obs. of  15 variables:
     ##  $ start_datetime    : POSIXct, format: "2020-01-24 23:20:00" "2020-01-25 01:40:00" ...
     ##  $ end_datetime      : POSIXct, format: "2020-01-25 00:08:00" "2020-01-25 07:20:00" ...
     ##  $ start_date        : Date, format: "2020-01-24" "2020-01-25" ...
@@ -155,15 +160,16 @@ str(feedbaby_sleep_processed)
 
 Some important details:
 
-  - I am very lucky to be home with my daughter full time for 19 weeks.
+  - I was very lucky to be home with my daughter full time for 19 weeks.
     Because of COVID-19, we started limiting social visits, errands, and
     basically most leaving the house except for doctor appointments when
     she was 8 weeks old. When she was 10 weeks old, a stay-at-home order
-    was enacted in Minnesota, and is still in effect. Because we spent
-    99% of our time at home and have no other children, we were able to
-    let her dictate when to eat, nap, play, etc., rather than trying to
-    conform her to our schedule, so her sleep is likely the best it
-    could possibly be for her\!
+    was enacted in Minnesota. Because we spent 99% of our time at home
+    and have no other children, we were able to let her dictate when to
+    eat, nap, play, etc., rather than trying to conform her to our
+    schedule, so her sleep is likely the best it could possibly be for
+    her\! The order ended when she was 18 weeks old, but we’ve opted to
+    keep her home outside of daycare and the occasional family visit.  
   - She is breastfed so she needs to eat more frequently than a formula
     or combination-fed baby.  
   - We didn’t start tracking reliably until we came home from the
@@ -179,18 +185,20 @@ feedbaby_sleep_processed %>%
                    y = weeks_old, 
                    yend = weeks_old,
                    color = type), 
-               size = 3) +
+               size = 2) +
   geom_rect(aes(xmin = 7, xmax = 31, ymin = 0, ymax = 3/7), fill = 'grey60') +
   scale_x_continuous(breaks = c(7,13,19,25,31), 
                      labels = c('7AM', '1PM', '7PM', '1AM', '7AM')) +
   scale_y_continuous(breaks = c(2,4,6,8,10,12,14,16,18,20,22,24)) +
+  coord_flip() +
   labs(title = 'Newborn sleep', 
        subtitle = 'Tracked using the Feed Baby app',
        x = 'Time', 
        y = 'Weeks old') +
   scale_color_kp(palette = "cool", reverse = TRUE) +
   theme(panel.grid.major.x = element_line(color="grey80"),
-        panel.grid.major.y = element_blank())
+        panel.grid.major.y = element_blank(),
+        legend.position = 'top') 
 ```
 
 ![](baby_sleep_files/figure-gfm/all_sleeps-1.png)<!-- -->
@@ -291,12 +299,12 @@ I was excited to see that you can access your Snoo data using the
 str(snoo_raw)
 ```
 
-    ## 'data.frame':    680 obs. of  5 variables:
-    ##  $ start_time: chr  "2020-02-23T21:20:30" "2020-02-24T01:12:02" "2020-02-24T05:37:11" "2020-02-24T13:33:34" ...
-    ##  $ end_time  : chr  "2020-02-24T00:24:23" "2020-02-24T04:11:42" "2020-02-24T05:43:02" "2020-02-24T16:24:33" ...
-    ##  $ duration  : int  11033 10780 351 10259 18219 2892 12759 13210 7563 10653 ...
-    ##  $ asleep    : int  10932 10780 351 9227 18219 2407 12244 13161 7563 10653 ...
-    ##  $ soothing  : int  101 0 0 1032 0 485 515 49 0 0 ...
+    ## 'data.frame':    694 obs. of  5 variables:
+    ##  $ start_time: chr  "2020-02-15T16:44:48" "2020-02-15T17:00:42" "2020-02-17T18:17:47" "2020-02-23T03:47:14" ...
+    ##  $ end_time  : chr  "2020-02-15T16:44:49" "2020-02-15T17:16:21" "2020-02-17T18:36:08" "2020-02-23T06:50:24" ...
+    ##  $ duration  : int  1 939 1101 10990 11033 10780 351 10259 18219 2892 ...
+    ##  $ asleep    : int  1 187 440 10990 10932 10780 351 9227 18219 2407 ...
+    ##  $ soothing  : int  0 752 661 0 101 0 0 1032 0 485 ...
 
 While I credit the constantly gentle motion of the Snoo for helping her
 sleep longer, the higher-motion, higher-volume white-noise “soothing”
@@ -328,22 +336,22 @@ snoo_sleep_processed <- preprocess_sleep(snoo_sleep)
 str(snoo_sleep_processed)
 ```
 
-    ## 'data.frame':    706 obs. of  15 variables:
-    ##  $ start_datetime    : POSIXct, format: "2020-02-23 21:20:30" "2020-02-24 01:12:02" ...
-    ##  $ end_datetime      : POSIXct, format: "2020-02-24 00:24:23" "2020-02-24 04:11:42" ...
-    ##  $ start_date        : Date, format: "2020-02-23" "2020-02-24" ...
-    ##  $ end_date          : Date, format: "2020-02-24" "2020-02-24" ...
-    ##  $ start_time_numeric: num  21.33 1.2 5.62 13.55 23.6 ...
-    ##  $ end_time_numeric  : num  0.4 4.18 5.72 16.4 4.67 ...
+    ## 'data.frame':    720 obs. of  15 variables:
+    ##  $ start_datetime    : POSIXct, format: "2020-02-15 16:44:48" "2020-02-15 17:00:42" ...
+    ##  $ end_datetime      : POSIXct, format: "2020-02-15 16:44:49" "2020-02-15 17:16:21" ...
+    ##  $ start_date        : Date, format: "2020-02-15" "2020-02-15" ...
+    ##  $ end_date          : Date, format: "2020-02-15" "2020-02-15" ...
+    ##  $ start_time_numeric: num  16.73 17 18.28 3.78 21.33 ...
+    ##  $ end_time_numeric  : num  16.73 17.27 18.6 6.83 0.4 ...
     ##  $ location          : chr  "snoo" "snoo" "snoo" "snoo" ...
-    ##  $ start_time_shift  : num  21.3 25.2 29.6 13.6 23.6 ...
-    ##  $ end_time_shift    : num  24.4 28.2 29.7 16.4 28.7 ...
-    ##  $ start_date_shift  : Date, format: "2020-02-23" "2020-02-23" ...
-    ##  $ end_date_shift    : Date, format: "2020-02-23" "2020-02-23" ...
+    ##  $ start_time_shift  : num  16.7 17 18.3 27.8 21.3 ...
+    ##  $ end_time_shift    : num  16.7 17.3 18.6 30.8 24.4 ...
+    ##  $ start_date_shift  : Date, format: "2020-02-15" "2020-02-15" ...
+    ##  $ end_date_shift    : Date, format: "2020-02-15" "2020-02-15" ...
     ##  $ split             : chr  NA NA NA NA ...
-    ##  $ type              : chr  "night" "night" "night" "day" ...
-    ##  $ days_old          : num  33 33 33 34 34 34 35 35 35 35 ...
-    ##  $ weeks_old         : num  4.71 4.71 4.71 4.86 4.86 ...
+    ##  $ type              : chr  "day" "day" "day" "night" ...
+    ##  $ days_old          : num  25 25 27 32 33 33 33 34 34 34 ...
+    ##  $ weeks_old         : num  3.57 3.57 3.86 4.57 4.71 ...
 
 ``` r
 feedbaby_sleep_processed %>%
@@ -354,18 +362,21 @@ feedbaby_sleep_processed %>%
                    y = weeks_old, 
                    yend = weeks_old,
                    color = location), 
-               size = 3) +
+               size = 2) +
   geom_rect(aes(xmin = 7, xmax = 31, ymin = 0, ymax = 3/7), fill = 'grey60') +
   scale_x_continuous(breaks = c(7,13,19,25,31), 
                      labels = c('7AM', '1PM', '7PM', '1AM', '7AM')) +
   scale_y_continuous(breaks = c(2,4,6,8,10,12,14,16,18,20,22,24)) +
+  coord_flip() +
   labs(title = 'Newborn sleep', 
        subtitle = 'Began using the Snoo for night sleep ~5 weeks; naps varied',
        x = 'Time', 
        y = 'Weeks old') +
   scale_color_manual(values = c('grey80', '#2F7C9F')) +
   theme(panel.grid.major.x = element_line(color="grey80"),
-        panel.grid.major.y = element_blank())
+        panel.grid.major.y = element_blank(),
+        axis.text.x = element_text(margin = margin(0,10,0,0)),
+        legend.position = 'top')
 ```
 
 ![](baby_sleep_files/figure-gfm/snoo_sleeps-1.png)<!-- -->
@@ -381,9 +392,9 @@ moving them into the Snoo, but didn’t get successful until week 12 or
 so.
 
 She started daycare at week 19, so midday naps happened there and not in
-the Snoo. We often had her take her first nap at home (my husband
-typically works second shift and can do daycare drop-off around 9) and
-nearly always put her down for a short catnap after I picked her up
+the Snoo. We often had her take her first nap at home (my partner
+typically works second shift and can do daycare drop-off a little later)
+and nearly always put her down for a short catnap after I picked her up
 around 4:30.
 
 There is some variance between the Feed Baby and Snoo sleep sessions
